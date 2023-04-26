@@ -4,8 +4,18 @@ const Book = require('../models/book');
 
 module.exports = {};
 
-module.exports.getAll = (page, perPage) => {
-  return Book.find().limit(perPage).skip(perPage*page).lean();
+module.exports.getAll = async (page, perPage, authorId, query) => {
+  console.log(query)
+  if (authorId) {
+    return await Book.find({ authorId: new mongoose.Types.ObjectId(authorId) }).limit(perPage).skip(perPage*page).lean();
+  } else if (query) {
+    return Book.find({ 
+      $text: { $search: query } },
+      { score: { $meta: 'textScore'}}
+    ).sort({ score: { $meta: 'textScore'}}).limit(perPage).skip(perPage*page).lean();
+  } else {
+    return Book.find().limit(perPage).skip(perPage*page).lean();
+  }  
 }
 
 module.exports.getById = (bookId) => {
