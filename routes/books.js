@@ -22,6 +22,14 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.get("/search", async (req, res, next) => {
+  let { page, perPage, query } = req.query;
+  page = page ? Number(page) : 0;
+  perPage = perPage ? Number(perPage) : 10;
+  const books = await bookDAO.getSearch(page, perPage, query);
+  res.json(books);
+});
+
 // Read - single book
 router.get("/:id", async (req, res, next) => {
   const book = await bookDAO.getById(req.params.id);
