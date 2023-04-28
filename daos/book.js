@@ -14,9 +14,9 @@ module.exports.getSearch = async (page, perPage, query) => {
   return await Book.find().limit(perPage).skip(perPage*page).lean();
 }
 
-module.exports.getStats = (page, perPage, authorId) => {
+module.exports.getStats = () => {
   return Book.aggregate([
-    { $match: { authorId: new mongoose.Types.ObjectId(authorId) } },
+    //{ $match: { authorId: new mongoose.Types.ObjectId(authorId) } },
     { $group: { _id: '$authorId', averagePageCount: { $avg: '$pageCount' }, numBooks: { $sum: 1 }, titles: { $addToSet: '$title' } } },
     { $project: { _id: 0, authorId: '$_id', averagePageCount: 1, numBooks: 1, titles: 1 } }
   ])

@@ -30,12 +30,8 @@ router.get("/search", async (req, res, next) => {
   res.json(books);
 });
 
-router.get("/authors/stats/:authorId", async (req, res, next) => {
-  const authorId = req.params.authorId;
-  let { page, perPage } = req.query;
-  page = page ? Number(page) : 0;
-  perPage = perPage ? Number(perPage) : 10;
-  const stats = await bookDAO.getStats(page, perPage, authorId);
+router.get("/authors/stats", async (req, res, next) => {
+  const stats = await bookDAO.getStats();
   res.json(stats);
 });
 
