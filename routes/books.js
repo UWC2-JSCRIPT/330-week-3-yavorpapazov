@@ -31,7 +31,8 @@ router.get("/search", async (req, res, next) => {
 });
 
 router.get("/authors/stats", async (req, res, next) => {
-  const stats = await bookDAO.getStats();
+  const { authorInfo } = req.query;
+  const stats = await bookDAO.getStats(authorInfo);
   res.json(stats);
 });
 
