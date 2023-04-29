@@ -13,7 +13,7 @@ router.post("/", async (req, res, next) => {
       const savedBook = await bookDAO.create(book);
       res.json(savedBook); 
     } catch(e) {
-      if (e instanceof bookDAO.BadDataError) {
+      if (e instanceof bookDAO.BadDataError || e.code === 11000) {
         res.status(400).send(e.message);
       } else {
         res.status(500).send(e.message);
