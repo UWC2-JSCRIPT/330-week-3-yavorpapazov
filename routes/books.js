@@ -13,13 +13,27 @@ router.post("/", async (req, res, next) => {
       const savedBook = await bookDAO.create(book);
       res.json(savedBook); 
     } catch(e) {
-      if (e instanceof bookDAO.BadDataError) {
+      if (e instanceof bookDAO.BadDataError || e.code === 11000) {
         res.status(400).send(e.message);
       } else {
         res.status(500).send(e.message);
       }
     }
   }
+});
+
+router.get("/search", async (req, res, next) => {
+  let { page, perPage, query } = req.query;
+  page = page ? Number(page) : 0;
+  perPage = perPage ? Number(perPage) : 10;
+  const books = await bookDAO.getSearch(page, perPage, query);
+  res.json(books);
+});
+
+router.get("/authors/stats", async (req, res, next) => {
+  const { authorInfo } = req.query;
+  const stats = await bookDAO.getStats(authorInfo);
+  res.json(stats);
 });
 
 // Read - single book
@@ -34,10 +48,10 @@ router.get("/:id", async (req, res, next) => {
 
 // Read - all books
 router.get("/", async (req, res, next) => {
-  let { page, perPage } = req.query;
+  let { page, perPage, authorId } = req.query;
   page = page ? Number(page) : 0;
   perPage = perPage ? Number(perPage) : 10;
-  const books = await bookDAO.getAll(page, perPage);
+  const books = await bookDAO.getAll(page, perPage, authorId);
   res.json(books);
 });
 
